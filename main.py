@@ -5,8 +5,8 @@ from pydantic import BaseModel
 
 class Book(BaseModel):
     id: int
-    titulo: str
-    autor: str
+    title: str
+    author: str
 
 app = FastAPI()
 
@@ -22,7 +22,7 @@ async def getBooks(response: Response):
 @app.get("/livros/{id}")
 async def getBookById(id: int, response: Response):
     for book in books:
-        if book.get('id') == id:
+        if book.id == id:
             return book
     response.status_code = status.HTTP_404_NOT_FOUND
     return {'error': 'Livro não encontrado.'}
@@ -35,7 +35,17 @@ async def createBook(book: Book):
 @app.put("/livros/{id}")
 async def updateBookById(id: int, book: Book, response: Response):
     for index,bookIndex in enumerate(books):
-        if bookIndex.get('id') == id:
-            books[index].update(book)
+        if bookIndex.id == id:
+            books[index] = book
             return books[index]
-    response.status_code = status.HTTP_204_NOT_FOUND
+    response.status_code = status.HTTP_404_NOT_FOUND
+    return {'error': 'Livro não encontrado.'}
+
+@app.delete("/livros/{id}")
+async def deleteBookById(id: int, response: Response):
+    for index,bookIndex in enumerate(books):
+        if bookIndex.id == id:
+            del books[index]
+            return books
+    response.status_code = status.HTTP_404_NOT_FOUND
+    return {'error': 'Livro não encontrado.'}
