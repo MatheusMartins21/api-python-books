@@ -12,40 +12,40 @@ app = FastAPI()
 
 books: List[Book] = []
 
-@app.get("/livros")
+@app.get("/books")
 async def getBooks(response: Response):
     if len(books) > 0:
         return books
     response.status_code = status.HTTP_404_NOT_FOUND
-    return {'error': 'Nenhum livro encontrado.'}
+    return {'error': 'Books not found.'}
 
-@app.get("/livros/{id}")
+@app.get("/books/{id}")
 async def getBookById(id: int, response: Response):
     for book in books:
         if book.id == id:
             return book
     response.status_code = status.HTTP_404_NOT_FOUND
-    return {'error': 'Livro não encontrado.'}
+    return {'error': 'The given id does not exist.'}
 
-@app.post("/livros")
+@app.post("/books")
 async def createBook(book: Book):
     books.append(book)
     return books
 
-@app.put("/livros/{id}")
+@app.put("/books/{id}")
 async def updateBookById(id: int, book: Book, response: Response):
     for index,bookIndex in enumerate(books):
         if bookIndex.id == id:
             books[index] = book
             return books[index]
     response.status_code = status.HTTP_404_NOT_FOUND
-    return {'error': 'Livro não encontrado.'}
+    return {'error': 'The given id does not exist.'}
 
-@app.delete("/livros/{id}")
+@app.delete("/books/{id}")
 async def deleteBookById(id: int, response: Response):
     for index,bookIndex in enumerate(books):
         if bookIndex.id == id:
             del books[index]
             return books
     response.status_code = status.HTTP_404_NOT_FOUND
-    return {'error': 'Livro não encontrado.'}
+    return {'error': 'The given id does not exist.'}
